@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Globe, LayoutTemplate, Search, 
+  Globe, LayoutTemplate, ShoppingCart, Search, 
   FileText, Cpu, Code, Video, ArrowRight, Menu, 
   X, CheckCircle2, Package, GitMerge, Send, Check
 } from 'lucide-react';
@@ -13,7 +13,7 @@ import {
 // ==========================================
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
 };
 
 const staggerContainer = {
@@ -159,6 +159,7 @@ const Hero = () => {
           className="hidden lg:block relative"
         >
           <div className="glass-panel p-8 rounded-3xl relative overflow-hidden group">
+            {/* Fixed standard arbitrary opacity scale */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
             
             <div className="relative z-10 space-y-12">
@@ -253,40 +254,6 @@ const TrustStrip = () => {
 // ==========================================
 // 4. SERVICES SECTION
 // ==========================================
-interface ServiceCardProps {
-  id: string;
-  icon: React.ReactNode;
-  title: string;
-  desc: string;
-  note?: string;
-  isDigital?: boolean;
-  delay: number;
-}
-
-const ServiceCard: React.FC<ServiceCardProps> = ({ id, icon, title, desc, note, isDigital, delay }) => (
-  <motion.div 
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: "-50px" }}
-    transition={{ duration: 0.5, delay }}
-    className="glass-panel p-6 rounded-2xl flex flex-col h-full hover:bg-white/10 transition-colors group relative overflow-hidden"
-  >
-    {isDigital && (
-      <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full -z-10 group-hover:scale-110 transition-transform" />
-    )}
-    <div className="flex justify-between items-start mb-6">
-      <div className="p-3 bg-neutral-900 rounded-xl border border-white/5">{icon}</div>
-      <span className="text-xs font-mono text-neutral-600">{id}</span>
-    </div>
-    <h4 className="text-lg font-medium text-white mb-3 leading-snug">{title}</h4>
-    <p className="text-sm text-neutral-400 mb-4 flex-1">{desc}</p>
-    {note && <p className="text-[10px] text-neutral-600 italic mt-auto mb-4">{note}</p>}
-    <div className="mt-auto flex items-center text-xs font-medium text-neutral-500 group-hover:text-white transition-colors">
-      Learn more <ArrowRight size={14} className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-    </div>
-  </motion.div>
-);
-
 const Services = () => {
   const importServices = [
     {
@@ -371,6 +338,30 @@ const Services = () => {
     </section>
   );
 };
+
+const ServiceCard = ({ id, icon, title, desc, note, isDigital, delay }: any) => (
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-50px" }}
+    transition={{ duration: 0.5, delay }}
+    className="glass-panel p-6 rounded-2xl flex flex-col h-full hover:bg-white/10 transition-colors group relative overflow-hidden"
+  >
+    {isDigital && (
+      <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full -z-10 group-hover:scale-110 transition-transform" />
+    )}
+    <div className="flex justify-between items-start mb-6">
+      <div className="p-3 bg-neutral-900 rounded-xl border border-white/5">{icon}</div>
+      <span className="text-xs font-mono text-neutral-600">{id}</span>
+    </div>
+    <h4 className="text-lg font-medium text-white mb-3 leading-snug">{title}</h4>
+    <p className="text-sm text-neutral-400 mb-4 flex-1">{desc}</p>
+    {note && <p className="text-[10px] text-neutral-600 italic mt-auto mb-4">{note}</p>}
+    <div className="mt-auto flex items-center text-xs font-medium text-neutral-500 group-hover:text-white transition-colors">
+      Learn more <ArrowRight size={14} className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+    </div>
+  </motion.div>
+);
 
 // ==========================================
 // 5. PROCESS SECTION
@@ -467,6 +458,7 @@ const About = () => {
           initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
           className="relative aspect-square md:aspect-[4/3] rounded-3xl glass-panel flex flex-col items-center justify-center p-12 text-center overflow-hidden"
         >
+          {/* Fixed standard arbitrary opacity scale */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent" />
           
           <h3 className="font-serif text-6xl text-white mb-6 relative z-10">M.R.S.</h3>
@@ -482,22 +474,60 @@ const About = () => {
 };
 
 // ==========================================
+// ==========================================
 // 8. CONTACT SECTION
 // ==========================================
 const Contact = () => {
-  const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
+  const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    service: '',
+    message: ''
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormStatus('submitting');
-    setTimeout(() => setFormStatus('success'), 1500);
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: 'bfd5f3d9-8771-4810-82ea-d57c3ee342f4', // 👈 PASTE YOUR WEB3FORMS ACCESS KEY HERE
+          name: formData.name,
+          email: formData.email,
+          service: formData.service,
+          message: formData.message,
+          subject: `New M.R.S. Inquiry from ${formData.name}`,
+        })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setFormStatus('success');
+        setFormData({ name: '', email: '', service: '', message: '' });
+      } else {
+        setFormStatus('error');
+      }
+    } catch (error) {
+      setFormStatus('error');
+    }
   };
 
   return (
     <section id="contact" className="py-32 bg-neutral-950 relative border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-16">
         
-        {/* Copy */}
+        {/* Left Info Column */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <h2 className="text-4xl md:text-6xl font-serif text-white mb-6">Have something in mind?</h2>
           <p className="text-lg text-neutral-400 mb-12 max-w-md">
@@ -511,16 +541,16 @@ const Contact = () => {
             </div>
             <div className="flex flex-col">
               <span className="text-xs font-mono text-neutral-600 uppercase tracking-wider mb-1">WhatsApp</span>
-              <a href="tel:+201029864288" className="text-white hover:text-neutral-300 transition-colors">+20 1029864288</a>
+              <a href="https://wa.me/201029864288" target="_blank" rel="noopener noreferrer" className="text-white hover:text-neutral-300 transition-colors">+20 1029864288</a>
             </div>
             <div className="flex flex-col">
               <span className="text-xs font-mono text-neutral-600 uppercase tracking-wider mb-1">Location</span>
-              <span className="text-white">El Khanka,EG</span>
+              <span className="text-white">El Khanka, EG</span>
             </div>
           </div>
         </motion.div>
 
-        {/* Form */}
+        {/* Form Column */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
           <form onSubmit={handleSubmit} className="glass-panel p-8 rounded-3xl space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
@@ -528,6 +558,8 @@ const Contact = () => {
                 <label htmlFor="name" className="text-sm font-medium text-neutral-300">Full Name</label>
                 <input 
                   id="name" required type="text" 
+                  value={formData.name}
+                  onChange={handleChange}
                   className="w-full bg-neutral-900/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-neutral-500 transition-colors"
                   placeholder="John Doe"
                 />
@@ -536,6 +568,8 @@ const Contact = () => {
                 <label htmlFor="email" className="text-sm font-medium text-neutral-300">Email Address</label>
                 <input 
                   id="email" required type="email" 
+                  value={formData.email}
+                  onChange={handleChange}
                   className="w-full bg-neutral-900/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-neutral-500 transition-colors"
                   placeholder="john@example.com"
                 />
@@ -547,17 +581,18 @@ const Contact = () => {
               <div className="relative">
                 <select 
                   id="service" required
+                  value={formData.service}
+                  onChange={handleChange}
                   className="w-full bg-neutral-900/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-neutral-500 transition-colors appearance-none cursor-pointer"
-                  defaultValue=""
                 >
                   <option value="" disabled className="bg-neutral-900">Select a service area...</option>
-                  <option value="sourcing" className="bg-neutral-900">Product Sourcing</option>
-                  <option value="logistics" className="bg-neutral-900">Import & Logistics Assistance</option>
-                  <option value="customs" className="bg-neutral-900">Customs & Documentation Assistance</option>
-                  <option value="hardware" className="bg-neutral-900">Technology & Hardware Import</option>
-                  <option value="web" className="bg-neutral-900">Web Development</option>
-                  <option value="content" className="bg-neutral-900">Content Creation / Video Editing</option>
-                  <option value="other" className="bg-neutral-900">Other / Consultation</option>
+                  <option value="Product Sourcing" className="bg-neutral-900">Product Sourcing</option>
+                  <option value="Import & Logistics Assistance" className="bg-neutral-900">Import & Logistics Assistance</option>
+                  <option value="Customs & Documentation Assistance" className="bg-neutral-900">Customs & Documentation Assistance</option>
+                  <option value="Technology & Hardware Import" className="bg-neutral-900">Technology & Hardware Import</option>
+                  <option value="Web Development" className="bg-neutral-900">Web Development</option>
+                  <option value="Content Creation / Video Editing" className="bg-neutral-900">Content Creation / Video Editing</option>
+                  <option value="Other / Consultation" className="bg-neutral-900">Other / Consultation</option>
                 </select>
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-500">
                   <svg width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M4 6h8l-4 5-4-5z" fill="currentColor"/></svg>
@@ -569,6 +604,8 @@ const Contact = () => {
               <label htmlFor="message" className="text-sm font-medium text-neutral-300">Project Details</label>
               <textarea 
                 id="message" required rows={4}
+                value={formData.message}
+                onChange={handleChange}
                 className="w-full bg-neutral-900/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-neutral-500 transition-colors resize-none"
                 placeholder="Briefly describe what you're looking to achieve..."
               />
@@ -576,15 +613,19 @@ const Contact = () => {
 
             <button 
               type="submit" 
-              disabled={formStatus !== 'idle'}
+              disabled={formStatus === 'submitting'}
               className="w-full py-4 rounded-xl bg-white text-black font-medium hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {formStatus === 'idle' && <><Send size={18} /> Send Inquiry</>}
-              {formStatus === 'submitting' && <span className="animate-pulse">Preparing message...</span>}
-              {formStatus === 'success' && <><Check size={18} /> Ready for Integration</>}
+              {formStatus === 'submitting' && <span className="animate-pulse">Sending inquiry...</span>}
+              {formStatus === 'success' && <><Check size={18} /> Message Sent Successfully!</>}
+              {formStatus === 'error' && <span>Error sending. Try again.</span>}
             </button>
             {formStatus === 'success' && (
-               <p className="text-xs text-center text-neutral-500 pt-2">Note: Frontend interface complete. Awaiting backend integration.</p>
+               <p className="text-xs text-center text-emerald-400 pt-2">Thank you! Your message has been sent directly to M.R.S.</p>
+            )}
+            {formStatus === 'error' && (
+               <p className="text-xs text-center text-rose-400 pt-2">Something went wrong. Please check your network or email directly.</p>
             )}
           </form>
         </motion.div>
