@@ -1,22 +1,26 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { 
-  Globe, LayoutTemplate, ShoppingCart, Search, 
+  Globe, LayoutTemplate, Search, 
   FileText, Cpu, Code, Video, ArrowRight, Menu, 
   X, CheckCircle2, Package, GitMerge, Send, Check
 } from 'lucide-react';
 
 // ==========================================
-// ANIMATION VARIANTS
+// ANIMATION VARIANTS (Explicitly Typed for TS)
 // ==========================================
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } 
+  }
 };
 
-const staggerContainer = {
+const staggerContainer: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -115,7 +119,6 @@ const Navigation = () => {
 const Hero = () => {
   return (
     <section id="home" className="relative min-h-screen flex items-center pt-24 overflow-hidden">
-      {/* Subtle Background Glow */}
       <div className="absolute top-1/4 -left-1/4 w-[500px] h-[500px] bg-neutral-800/20 rounded-full blur-[120px]" />
       <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-neutral-900/20 rounded-full blur-[150px]" />
 
@@ -151,7 +154,7 @@ const Hero = () => {
           </motion.div>
         </motion.div>
 
-        {/* Right: Premium Visual Glassmorphism */}
+        {/* Right: Glassmorphism Card */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -159,7 +162,6 @@ const Hero = () => {
           className="hidden lg:block relative"
         >
           <div className="glass-panel p-8 rounded-3xl relative overflow-hidden group">
-            {/* Fixed standard arbitrary opacity scale */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
             
             <div className="relative z-10 space-y-12">
@@ -254,6 +256,40 @@ const TrustStrip = () => {
 // ==========================================
 // 4. SERVICES SECTION
 // ==========================================
+interface ServiceCardProps {
+  id: string;
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+  note?: string;
+  isDigital?: boolean;
+  delay: number;
+}
+
+const ServiceCard: React.FC<ServiceCardProps> = ({ id, icon, title, desc, note, isDigital, delay }) => (
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-50px" }}
+    transition={{ duration: 0.5, delay }}
+    className="glass-panel p-6 rounded-2xl flex flex-col h-full hover:bg-white/10 transition-colors group relative overflow-hidden"
+  >
+    {isDigital && (
+      <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full -z-10 group-hover:scale-110 transition-transform" />
+    )}
+    <div className="flex justify-between items-start mb-6">
+      <div className="p-3 bg-neutral-900 rounded-xl border border-white/5">{icon}</div>
+      <span className="text-xs font-mono text-neutral-600">{id}</span>
+    </div>
+    <h4 className="text-lg font-medium text-white mb-3 leading-snug">{title}</h4>
+    <p className="text-sm text-neutral-400 mb-4 flex-1">{desc}</p>
+    {note && <p className="text-[10px] text-neutral-600 italic mt-auto mb-4">{note}</p>}
+    <div className="mt-auto flex items-center text-xs font-medium text-neutral-500 group-hover:text-white transition-colors">
+      Learn more <ArrowRight size={14} className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+    </div>
+  </motion.div>
+);
+
 const Services = () => {
   const importServices = [
     {
@@ -339,30 +375,6 @@ const Services = () => {
   );
 };
 
-const ServiceCard = ({ id, icon, title, desc, note, isDigital, delay }: any) => (
-  <motion.div 
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: "-50px" }}
-    transition={{ duration: 0.5, delay }}
-    className="glass-panel p-6 rounded-2xl flex flex-col h-full hover:bg-white/10 transition-colors group relative overflow-hidden"
-  >
-    {isDigital && (
-      <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full -z-10 group-hover:scale-110 transition-transform" />
-    )}
-    <div className="flex justify-between items-start mb-6">
-      <div className="p-3 bg-neutral-900 rounded-xl border border-white/5">{icon}</div>
-      <span className="text-xs font-mono text-neutral-600">{id}</span>
-    </div>
-    <h4 className="text-lg font-medium text-white mb-3 leading-snug">{title}</h4>
-    <p className="text-sm text-neutral-400 mb-4 flex-1">{desc}</p>
-    {note && <p className="text-[10px] text-neutral-600 italic mt-auto mb-4">{note}</p>}
-    <div className="mt-auto flex items-center text-xs font-medium text-neutral-500 group-hover:text-white transition-colors">
-      Learn more <ArrowRight size={14} className="ml-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-    </div>
-  </motion.div>
-);
-
 // ==========================================
 // 5. PROCESS SECTION
 // ==========================================
@@ -386,7 +398,6 @@ const Process = () => {
         </motion.div>
 
         <div className="grid md:grid-cols-4 gap-8 relative">
-          {/* Connecting Line Desktop */}
           <div className="hidden md:block absolute top-6 left-[10%] right-[10%] h-[1px] bg-neutral-800" />
           
           {steps.map((step, i) => (
@@ -412,7 +423,7 @@ const Process = () => {
 };
 
 // ==========================================
-// 6 & 7. ABOUT & WHY M.R.S.
+// 6 & 7. ABOUT SECTION
 // ==========================================
 const About = () => {
   return (
@@ -458,7 +469,6 @@ const About = () => {
           initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
           className="relative aspect-square md:aspect-[4/3] rounded-3xl glass-panel flex flex-col items-center justify-center p-12 text-center overflow-hidden"
         >
-          {/* Fixed standard arbitrary opacity scale */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent" />
           
           <h3 className="font-serif text-6xl text-white mb-6 relative z-10">M.R.S.</h3>
@@ -474,8 +484,7 @@ const About = () => {
 };
 
 // ==========================================
-// ==========================================
-// 8. CONTACT SECTION
+// 8. WORKING CONTACT SECTION (Web3Forms)
 // ==========================================
 const Contact = () => {
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
@@ -502,7 +511,7 @@ const Contact = () => {
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          access_key: 'bfd5f3d9-8771-4810-82ea-d57c3ee342f4', // 👈 PASTE YOUR WEB3FORMS ACCESS KEY HERE
+          access_key: 'bfd5f3d9-8771-4810-82ea-d57c3ee342f4', // Get a free key at https://web3forms.com (takes 10 sec)
           name: formData.name,
           email: formData.email,
           service: formData.service,
@@ -518,7 +527,7 @@ const Contact = () => {
       } else {
         setFormStatus('error');
       }
-    } catch (error) {
+    } catch {
       setFormStatus('error');
     }
   };
@@ -527,7 +536,7 @@ const Contact = () => {
     <section id="contact" className="py-32 bg-neutral-950 relative border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-16">
         
-        {/* Left Info Column */}
+        {/* Info Column */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <h2 className="text-4xl md:text-6xl font-serif text-white mb-6">Have something in mind?</h2>
           <p className="text-lg text-neutral-400 mb-12 max-w-md">
@@ -625,7 +634,7 @@ const Contact = () => {
                <p className="text-xs text-center text-emerald-400 pt-2">Thank you! Your message has been sent directly to M.R.S.</p>
             )}
             {formStatus === 'error' && (
-               <p className="text-xs text-center text-rose-400 pt-2">Something went wrong. Please check your network or email directly.</p>
+               <p className="text-xs text-center text-rose-400 pt-2">Something went wrong. Please check your connection or contact directly.</p>
             )}
           </form>
         </motion.div>
@@ -661,8 +670,8 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-6 md:px-12 mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-xs text-neutral-600">
         <p>© 2026 M.R.S. — Mohamed Reda Services. All rights reserved.</p>
         <div className="flex space-x-4 mt-4 md:mt-0">
-          <a href="https://www.facebook.com/profile.php?id=61592754163260" className="hover:text-neutral-400 transition-colors">Facebook</a>
-          <a href="https://www.tiktok.com/@d3f4ulty" className="hover:text-neutral-400 transition-colors">Tiktok</a>
+          <a href="https://www.facebook.com/profile.php?id=61592754163260" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-400 transition-colors">Facebook</a>
+          <a href="https://www.tiktok.com/@d3f4ulty" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-400 transition-colors">Tiktok</a>
         </div>
       </div>
     </footer>
