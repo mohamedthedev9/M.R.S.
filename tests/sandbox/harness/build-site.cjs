@@ -1,0 +1,3 @@
+const esbuild = require("/home/claude/.npm-global/lib/node_modules/tsx/node_modules/esbuild"); const path = require("path"), b = path.resolve(__dirname);
+esbuild.build({ entryPoints: [b + "/site-entry.tsx"], bundle: true, minify: true, outfile: b + "/site.js", jsx: "automatic", platform: "browser", format: "iife", nodePaths: ["/home/claude/node_modules"], tsconfig: path.resolve(b, "../src/tsconfig.json"), define: { "process.env.NODE_ENV": '"production"' },
+  alias: { "next/link": b + "/link-stub.js", "next/image": b + "/image-stub2.js", "lucide-react": b + "/lucide-stub2.js", "next/navigation": b + "/nav-stub.js", "@": path.resolve(b, "../src") }, logLevel: "warning" }).then(() => console.log("bundled")).catch((e) => { console.error(e.message); process.exit(1); });

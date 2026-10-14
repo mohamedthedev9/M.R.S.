@@ -1,0 +1,44 @@
+/* M.R.S. design tokens. RGB channels so Tailwind opacity modifiers work. */
+:root {
+  /* color (contrast vs --bg verified in Phase 1) */
+  --bg: 0 0 0;                  /* pure black, as in the owner's canvases */
+  --surface-1: 10 10 11;
+  --surface-2: 20 20 22;
+  --border: 40 40 44;          /* decorative only (1.4:1) */
+  --border-strong: 60 60 66;   /* decorative strong dividers */
+  --control: 112 112 120;       /* boundaries of inputs/buttons: 3.2-3.6:1 on every surface (WCAG 1.4.11) */
+  --text: 245 245 245;
+  --text-2: 168 168 174;
+  --text-muted: 140 140 148;   /* 6.1:1 */
+  --accent: 91 140 255;        /* 6.3:1; button text on it is --bg */
+  --accent-hover: 127 165 255;
+  --accent-tech: 63 217 192;   /* optional, automation only */
+  --success: 52 201 138;
+  --warning: 242 181 68;
+  --danger: 239 91 91;
+
+  /* brand gradient: sampled from the owner\'s kit posts (magenta > violet > blue > azure > cyan).
+     The indigo stop is 3.1:1 on black: use ONLY for large text (>= 24px) and graphics. */
+  --brand-0: #f95bf6; --brand-1: #8f3df8; --brand-2: #366cf4; --brand-3: #1db1ef; --brand-4: #03f6eb;
+
+  /* radii: by role, not one radius for everything */
+  --radius-sm: 4px;   /* inputs, badges */
+  --radius-md: 6px;   /* buttons */
+  --radius-lg: 8px;   /* cards */
+  --radius-xl: 12px;  /* large panels, device frames */
+
+  /* depth */
+  --blur-glass: 12px;
+  --shadow-overlay: 0 24px 64px -16px rgb(0 0 0 / 0.6);
+
+  /* motion */
+  --dur-fast: 120ms;
+  --dur-base: 220ms;
+  --dur-slow: 480ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* layout */
+  --space-section: clamp(4.5rem, 10vw, 9rem);
+  --nav-height: 4rem;
+}

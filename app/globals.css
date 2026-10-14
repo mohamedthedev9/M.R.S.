@@ -1,0 +1,55 @@
+@import "../styles/tokens.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { background: rgb(var(--bg)); color-scheme: dark; scroll-padding-top: calc(var(--nav-height) + 1rem); scroll-behavior: smooth; }
+  body { background: rgb(var(--bg)); color: rgb(var(--text)); font-family: var(--font-sans, "Inter"), "SF Pro Text", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 3px; border-radius: var(--radius-sm); }
+  ::selection { background: rgb(var(--accent) / 0.35); }
+}
+
+@layer components {
+  /* faint engineering grid, fades at the edges */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgb(var(--text) / 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--text) / 0.035) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+  }
+  /* L-shaped corner ticks on two opposite corners, like a drawing sheet */
+  .ticks { position: relative; }
+  .ticks::before, .ticks::after { content: ""; position: absolute; width: 10px; height: 10px; border-color: rgb(var(--accent) / 0.7); pointer-events: none; }
+  .ticks::before { top: -1px; left: -1px; border-top: 1px solid; border-left: 1px solid; }
+  .ticks::after { bottom: -1px; right: -1px; border-bottom: 1px solid; border-right: 1px solid; }
+}
+
+@keyframes mrs-pulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
+@keyframes mrs-spin { to { transform: rotate(360deg) } }
+@keyframes mrs-fill { from { width: 4% } to { width: 92% } }
+@keyframes mrs-layer-in { from { opacity: 0; transform: scale(.92) } to { opacity: 1; transform: scale(1) } }
+
+@keyframes mrs-draw { to { stroke-dashoffset: 0 } }
+
+/* Scroll-linked timeline: connectors draw as the timeline passes through the viewport.
+   Progressive enhancement: browsers without animation-timeline just show the full line. */
+@supports (animation-timeline: view()) {
+  @keyframes mrs-grow-y { from { transform: scaleY(0) } to { transform: scaleY(1) } }
+  @keyframes mrs-grow-x { from { transform: scaleX(0) } to { transform: scaleX(1) } }
+  .tl-line { transform-origin: top; animation: mrs-grow-y linear both; animation-timeline: view(); animation-range: entry 15% cover 50%; }
+  @media (min-width: 1024px) { .tl-line { transform-origin: left; animation-name: mrs-grow-x; } }
+}
+
+/* Gradient text: falls back to the flat accent where background-clip:text is unsupported, and to system text in forced-colors mode. */
+@layer components {
+  .text-brand { color: rgb(var(--accent)); background-image: linear-gradient(90deg, var(--brand-0) 0%, var(--brand-1) 32%, var(--brand-2) 58%, var(--brand-3) 82%, var(--brand-4) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  @media (forced-colors: active) { .text-brand { background: none; -webkit-text-fill-color: CanvasText; color: CanvasText; } }
+}
+
+/* Reduced motion: no large transforms, no loops; content and function remain */
+@media (prefers-reduced-motion: reduce) {
+  .tl-line { animation: none !important; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
